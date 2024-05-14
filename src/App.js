@@ -3,7 +3,10 @@ import MapComponent from "./MapComponent";
 import WeatherComponent from "./WeatherComponent";
 
 function App() {
-  const [clickCoords, setClickCoords] = useState({ lat: 59.9202, lng: 10.865 });
+  const [clickCoords, setClickCoords] = useState({
+    lat: 59.92130175321992,
+    lng: 10.748972234587066,
+  });
   useEffect(() => {
     console.log("useEffect: ", clickCoords);
   }, [clickCoords]);
