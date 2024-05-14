@@ -6,15 +6,19 @@ const SearchBar = ({ onSearchComplete }) => {
 
   const handleSearch = async () => {
     const provider = new OpenStreetMapProvider();
-    const results = await provider.search({ query: input });
-    if (results && results.length > 0) {
-      const { x, y, label } = results[0]; // x is longitude, y is latitude
-      onSearchComplete(y, x);
-      console.log(
-        `Search result for '${label}' at Latitude: ${y}, Longitude: ${x}`
-      );
-    } else {
-      console.log("No results found");
+    try {
+      const results = await provider.search({ query: input });
+      if (results && results.length > 0) {
+        const { x, y, label } = results[0]; // x is longitude, y is latitude
+        onSearchComplete(y, x);
+        console.log(
+          `Search result for '${label}' at Latitude: ${y}, Longitude: ${x}`
+        );
+      } else {
+        console.log("No results found");
+      }
+    } catch (error) {
+      console.error("Error during search:", error);
     }
   };
 
