@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { fetchWeatherApi } from "openmeteo"; // Ensure this import matches your actual API module path
+import { fetchWeatherApi } from "openmeteo";
+import "chartjs-adapter-date-fns";
+
 import {
   Chart as ChartJS,
   LineElement,
@@ -10,8 +12,8 @@ import {
   Title,
   Tooltip,
   Legend,
+  TimeScale,
 } from "chart.js";
-
 ChartJS.register(
   LineElement,
   CategoryScale,
@@ -19,7 +21,8 @@ ChartJS.register(
   PointElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  TimeScale
 );
 
 function WeatherComponent({ latitude, longitude }) {
@@ -87,10 +90,51 @@ function WeatherComponent({ latitude, longitude }) {
     ],
   };
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          unit: "hour",
+          tooltipFormat: "MMM d, HH",
+          displayFormats: {
+            hour: "MMM d, HH",
+            day: "MMM d, HH",
+          },
+        },
+        title: {
+          display: true,
+          text: "Time",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Temperature (�C)",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Hourly Temperature",
+      },
+    },
+  };
+
   return (
-    <div>
-      <h1>Weather Data</h1>
-      {weatherData ? <Line data={chartData} /> : <p>No data available</p>}
+    <div style={{ height: "100%", width: "100%" }}>
+      {weatherData ? (
+        <Line data={chartData} options={chartOptions} />
+      ) : (
+        <p>No data available</p>
+      )}
     </div>
   );
 }
