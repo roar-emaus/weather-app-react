@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MapComponent from "./MapComponent";
-import WeatherComponent from "./WeatherComponent";
+// import WeatherComponent from "./WeatherComponent";
+import ForecastChart from "./ForecastChart";
 
 function App() {
   const [clickCoords, setClickCoords] = useState({
@@ -19,10 +20,7 @@ function App() {
         />
       </div>
       <div className="Weather" style={{ height: "50vh", width: "100vh" }}>
-        <WeatherComponent
-          latitude={clickCoords.lat}
-          longitude={clickCoords.lng}
-        />
+        <ForecastChart latitude={clickCoords.lat} longitude={clickCoords.lng} />
       </div>
     </div>
   );
