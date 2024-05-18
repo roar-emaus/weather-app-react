@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
 import {
@@ -12,7 +12,7 @@ import {
   Legend,
   TimeScale,
 } from "chart.js";
-import ForecastData from "./FetchForecast";
+import { fetchForecastData } from "./FetchWeatherData";
 
 ChartJS.register(
   LineElement,
@@ -26,17 +26,36 @@ ChartJS.register(
 );
 
 const ForecastChart = ({ latitude, longitude }) => {
-  const { weatherData, loading, error } = ForecastData(latitude, longitude);
+  const [weatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchForecastData(latitude, longitude);
+        console.log("fetchData", data);
+        setWeatherData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [latitude, longitude]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   const chartData = {
-    labels: weatherData ? weatherData.hourly.time : [],
+    labels: weatherData ? weatherData.time : [],
     datasets: [
       {
-        label: "Temperature (°C)",
-        data: weatherData ? weatherData.hourly.temperature2m : [],
+        label: "Temperature (�C)",
+        data: weatherData ? weatherData.temperature2m : [],
         fill: false,
         borderColor: "rgba(75, 192, 192, 1)",
         tension: 0.1,
@@ -66,7 +85,7 @@ const ForecastChart = ({ latitude, longitude }) => {
       y: {
         title: {
           display: true,
-          text: "Temperature (°C)",
+          text: "Temperature (�C)",
         },
       },
     },
@@ -81,7 +100,6 @@ const ForecastChart = ({ latitude, longitude }) => {
       },
     },
   };
-
   return (
     <div style={{ height: "100%", width: "100%" }}>
       {weatherData ? (
